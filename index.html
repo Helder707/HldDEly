@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hel Delyfoods Restaurant Menu</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: url('https://images.unsplash.com/photo-1495195134817-a11d233f7024?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: rgba(139, 69, 19, 0.9);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 5px solid #FFD700;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header p {
+            font-size: 1.2em;
+            font-style: italic;
+        }
+
+        .menu-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 30px 0;
+            color: #FFD700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .menu-toggle button {
+            font-size: 18px;
+            padding: 12px 25px;
+            margin: 5px 15px;
+            cursor: pointer;
+            background-color: #8B4513;
+            color: white;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle button:hover {
+            background-color: #FFD700;
+            color: #8B4513;
+        }
+
+        .menu-section {
+            display: none;
+            padding: 20px;
+            background-color: rgba(255, 245, 238, 0.9);
+            margin: 0 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        .menu-section h2 {
+            color: #8B4513;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #D2B48C;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.02);
+        }
+
+        .menu-item h3 {
+            margin: 0;
+            font-size: 22px;
+            color: #8B4513;
+        }
+
+        .menu-item p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .menu-item button {
+            margin-left: auto;
+            padding: 10px 15px;
+            background-color: #FFD700;
+            color: #8B4513;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .menu-item button:hover {
+            background-color: #DAA520;
+        }
+
+        #cartListBox {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 245, 238, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 900;
+            width: 250px;
+            border: 2px solid #FFD700;
+        }
+
+        #cartListBox.active {
+            display: block;
+        }
+
+        #cartListBox h4 {
+            margin: 0 0 10px 0;
+            color: #8B4513;
+        }
+
+        #cartListBox ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .remove-btn {
+            background-color: #A52A2A;
+            padding: 5px 10px;
+            margin-left: 10px;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background-color: #8B0000;
+        }
+
+        #cartTotal {
+            font-weight: bold;
+            margin: 10px 0;
+            color: #8B4513;
+        }
+
+        #cartListBox button {
+            padding: 8px 12px;
+            margin: 5px 5px 0 0;
+            background-color: #FFD700;
+            color: #8B4513;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #cartListBox button:hover {
+            background-color: #DAA520;
+        }
+
+        #purchaseBtn {
+            background-color: #28A745;
+            padding: 10px 20px;
+            font-size: 16px;
+            position: relative;
+        }
+
+        #purchaseHistoryDropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background-color: rgba(255, 245, 238, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 300px;
+            border: 2px solid #FFD700;
+        }
+
+        #purchaseHistoryDropdown.active {
+            display: block;
+        }
+
+        .history-item {
+            margin-bottom: 10px;
+        }
+
+        .cancel-order-btn {
+            background-color: #A52A2A;
+            padding: 5px 10px;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .cancel-order-btn:hover {
+            background-color: #8B0000;
+        }
+
+        #thankYouMessage {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(139, 69, 19, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            border: 2px solid #FFD700;
+        }
+
+        #thankYouMessage.active {
+            display: block;
+        }
+
+        #thankYouMessage button {
+            background-color: #A52A2A;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #thankYouMessage button:hover {
+            background-color: #8B0000;
+        }
+
+        #purchaseDetails {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 245, 238, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 1100;
+            width: 400px;
+            border: 2px solid #FFD700;
+        }
+
+        #purchaseDetails.active {
+            display: block;
+        }
+
+        #purchaseDetails h3 {
+            color: #8B4513;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        #purchaseDetails .close-details {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #8B4513;
+            cursor: pointer;
+        }
+
+        #purchaseDetails .close-details:hover {
+            color: #A52A2A;
+        }
+
+        #purchaseDetails button.clear-history {
+            background-color: #A52A2A;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #purchaseDetails button.clear-history:hover {
+            background-color: #8B0000;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: inline-block;
+        }
+
+        .language-btn {
+            font-size: 16px;
+            padding: 8px 15px;
+            background-color: #8B4513;
+            color: white;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-btn:hover {
+            background-color: #FFD700;
+            color: #8B4513;
+        }
+
+        .language-dropdown {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 245, 238, 0.95);
+            min-width: 120px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border-radius: 5px;
+            border: 2px solid #FFD700;
+            top: 100%;
+            left: 0;
+        }
+
+        .language-dropdown.active {
+            display: block;
+        }
+
+        .language-dropdown button {
+            color: #8B4513;
+            padding: 8px 15px;
+            text-align: left;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .language-dropdown button:hover {
+            background-color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hel Delyfoods Restaurant Menu</h1>
+        <p>Contact us: heldelyfoods@email.com | Phone: +258 878276897</p>
+        <div class="language-toggle">
+            <button class="language-btn">Language</button>
+            <div class="language-dropdown">
+                <button class="lang-option" data-lang="en">English</button>
+                <button class="lang-option" data-lang="pt">Português</button>
+                <button class="lang-option" data-lang="fr">Français</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="menu-title">Menu</div>
+
+    <div class="menu-toggle">
+        <button data-section="entrances">Entrances 🍽️</button>
+        <button data-section="mains">Main Foods 🍖</button>
+        <button data-section="desserts">Desserts 🍰</button>
+        <button data-section="coldDrinks">Cold Drinks 🧊</button>
+        <button data-section="hotDrinks">Hot Drinks ☕</button>
+    </div>
+
+    <div id="entrances" class="menu-section">
+        <h2>Entrances</h2>
+        <div class="menu-item"><h3>Bruschetta 🍞</h3><p>Price: $8</p><button data-item="Bruschetta" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Caesar Salad 🥗</h3><p>Price: $10</p><button data-item="Caesar Salad" data-price="10">Add to Cart</button></div>
+        <div class="menu-item"><h3>Garlic Bread 🧄</h3><p>Price: $5</p><button data-item="Garlic Bread" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Spring Rolls 🥟</h3><p>Price: $7</p><button data-item="Spring Rolls" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chicken Wings 🍗</h3><p>Price: $9</p><button data-item="Chicken Wings" data-price="9">Add to Cart</button></div>
+        <div class="menu-item"><h3>French Fries 🍟</h3><p>Price: $6</p><button data-item="French Fries" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Onion Rings 🧅</h3><p>Price: $6</p><button data-item="Onion Rings" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Stuffed Mushrooms 🍄</h3><p>Price: $8</p><button data-item="Stuffed Mushrooms" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Bruschetta with Mozzarella 🧀</h3><p>Price: $9</p><button data-item="Bruschetta with Mozzarella" data-price="9">Add to Cart</button></div>
+        <div class="menu-item"><h3>Fried Calamari 🦑</h3><p>Price: $11</p><button data-item="Fried Calamari" data-price="11">Add to Cart</button></div>
+        <div class="menu-item"><h3>Vegetable Samosas 🥒</h3><p>Price: $5</p><button data-item="Vegetable Samosas" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chicken Tenders 🍗</h3><p>Price: $8</p><button data-item="Chicken Tenders" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Hummus with Pita 🥙</h3><p>Price: $6</p><button data-item="Hummus with Pita" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Vegetable Tempura 🍤</h3><p>Price: $7</p><button data-item="Vegetable Tempura" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Cheese Platter 🧀</h3><p>Price: $12</p><button data-item="Cheese Platter" data-price="12">Add to Cart</button></div>
+    </div>
+
+    <div id="mains" class="menu-section">
+        <h2>Main Foods</h2>
+        <div class="menu-item"><h3>Grilled Steak 🥩</h3><p>Price: $20</p><button data-item="Grilled Steak" data-price="20">Add to Cart</button></div>
+        <div class="menu-item"><h3>Spaghetti Pasta 🍝</h3><p>Price: $15</p><button data-item="Spaghetti Pasta" data-price="15">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chicken Parmesan 🍗</h3><p>Price: $18</p><button data-item="Chicken Parmesan" data-price="18">Add to Cart</button></div>
+        <div class="menu-item"><h3>Seafood Paella 🦞</h3><p>Price: $22</p><button data-item="Seafood Paella" data-price="22">Add to Cart</button></div>
+        <div class="menu-item"><h3>Vegetable Stir Fry 🍚</h3><p>Price: $12</p><button data-item="Vegetable Stir Fry" data-price="12">Add to Cart</button></div>
+        <div class="menu-item"><h3>Beef Burger 🍔</h3><p>Price: $14</p><button data-item="Beef Burger" data-price="14">Add to Cart</button></div>
+        <div class="menu-item"><h3>Grilled Salmon 🐟</h3><p>Price: $19</p><button data-item="Grilled Salmon" data-price="19">Add to Cart</button></div>
+        <div class="menu-item"><h3>BBQ Ribs 🍖</h3><p>Price: $25</p><button data-item="BBQ Ribs" data-price="25">Add to Cart</button></div>
+        <div class="menu-item"><h3>Lamb Chops 🍖</h3><p>Price: $28</p><button data-item="Lamb Chops" data-price="28">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chicken Alfredo 🍝</h3><p>Price: $16</p><button data-item="Chicken Alfredo" data-price="16">Add to Cart</button></div>
+        <div class="menu-item"><h3>Beef Stew 🍲</h3><p>Price: $17</p><button data-item="Beef Stew" data-price="17">Add to Cart</button></div>
+        <div class="menu-item"><h3>Fish and Chips 🍟🐟</h3><p>Price: $15</p><button data-item="Fish and Chips" data-price="15">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chicken Fajitas 🌯</h3><p>Price: $18</p><button data-item="Chicken Fajitas" data-price="18">Add to Cart</button></div>
+        <div class="menu-item"><h3>Vegetarian Pizza 🍕</h3><p>Price: $14</p><button data-item="Vegetarian Pizza" data-price="14">Add to Cart</button></div>
+    </div>
+
+    <div id="desserts" class="menu-section">
+        <h2>Desserts</h2>
+        <div class="menu-item"><h3>Chocolate Cake 🍫</h3><p>Price: $7</p><button data-item="Chocolate Cake" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Cheesecake 🍰</h3><p>Price: $6</p><button data-item="Cheesecake" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Apple Pie 🍏</h3><p>Price: $5</p><button data-item="Apple Pie" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Tiramisu 🍮</h3><p>Price: $8</p><button data-item="Tiramisu" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Lemon Sorbet 🍋</h3><p>Price: $6</p><button data-item="Lemon Sorbet" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Vanilla Pudding 🍮</h3><p>Price: $5</p><button data-item="Vanilla Pudding" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chocolate Mousse 🍫</h3><p>Price: $8</p><button data-item="Chocolate Mousse" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Carrot Cake 🥕</h3><p>Price: $7</p><button data-item="Carrot Cake" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Coconut Macaroons 🥥</h3><p>Price: $6</p><button data-item="Coconut Macaroons" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Creme Brulee 🍮</h3><p>Price: $9</p><button data-item="Creme Brulee" data-price="9">Add to Cart</button></div>
+        <div class="menu-item"><h3>Fruit Tart 🍓</h3><p>Price: $7</p><button data-item="Fruit Tart" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Banoffee Pie 🍌</h3><p>Price: $8</p><button data-item="Banoffee Pie" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Panna Cotta 🍮</h3><p>Price: $7</p><button data-item="Panna Cotta" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chocolate Chip Cookies 🍪</h3><p>Price: $5</p><button data-item="Chocolate Chip Cookies" data-price="5">Add to Cart</button></div>
+    </div>
+
+    <div id="coldDrinks" class="menu-section">
+        <h2>Cold Drinks</h2>
+        <div class="menu-item"><h3>Iced Tea 🍹</h3><p>Price: $5</p><button data-item="Iced Tea" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Lemonade 🍋</h3><p>Price: $4</p><button data-item="Lemonade" data-price="4">Add to Cart</button></div>
+        <div class="menu-item"><h3>Fresh Orange Juice 🍊</h3><p>Price: $6</p><button data-item="Fresh Orange Juice" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Iced Coffee ☕</h3><p>Price: $7</p><button data-item="Iced Coffee" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Milkshake 🍨</h3><p>Price: $8</p><button data-item="Milkshake" data-price="8">Add to Cart</button></div>
+        <div class="menu-item"><h3>Cold Brew Coffee 🧋</h3><p>Price: $6</p><button data-item="Cold Brew Coffee" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Fruit Smoothie 🍓</h3><p>Price: $7</p><button data-item="Fruit Smoothie" data-price="7">Add to Cart</button></div>
+        <div class="menu-item"><h3>Ice Cream Float 🍦</h3><p>Price: $6</p><button data-item="Ice Cream Float" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Coconut Water 🥥</h3><p>Price: $5</p><button data-item="Coconut Water" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Cold Soda 🥤</h3><p>Price: $3</p><button data-item="Cold Soda" data-price="3">Add to Cart</button></div>
+        <div class="menu-item"><h3>Frozen Lemonade 🧊</h3><p>Price: $6</p><button data-item="Frozen Lemonade" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Berry Smoothie 🫐</h3><p>Price: $7</p><button data-item="Berry Smoothie" data-price="7">Add to Cart</button></div>
+    </div>
+
+    <div id="hotDrinks" class="menu-section">
+        <h2>Hot Drinks</h2>
+        <div class="menu-item"><h3>Espresso ☕</h3><p>Price: $3</p><button data-item="Espresso" data-price="3">Add to Cart</button></div>
+        <div class="menu-item"><h3>Cappuccino ☕</h3><p>Price: $5</p><button data-item="Cappuccino" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Latte ☕</h3><p>Price: $4</p><button data-item="Latte" data-price="4">Add to Cart</button></div>
+        <div class="menu-item"><h3>Hot Chocolate 🍫</h3><p>Price: $5</p><button data-item="Hot Chocolate" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Americano ☕</h3><p>Price: $4</p><button data-item="Americano" data-price="4">Add to Cart</button></div>
+        <div class="menu-item"><h3>Flat White ☕</h3><p>Price: $5</p><button data-item="Flat White" data-price="5">Add to Cart</button></div>
+        <div class="menu-item"><h3>Mocha ☕</h3><p>Price: $6</p><button data-item="Mocha" data-price="6">Add to Cart</button></div>
+        <div class="menu-item"><h3>Chai Latte ☕</h3><p>Price: $4</p><button data-item="Chai Latte" data-price="4">Add to Cart</button></div>
+        <div class="menu-item"><h3>Green Tea 🍵</h3><p>Price: $3</p><button data-item="Green Tea" data-price="3">Add to Cart</button></div>
+        <div class="menu-item"><h3>Black Tea 🍵</h3><p>Price: $2</p><button data-item="Black Tea" data-price="2">Add to Cart</button></div>
+    </div>
+
+    <div id="cartListBox">
+        <h4>Your Cart</h4>
+        <ul id="cartList"></ul>
+        <div id="cartTotal">Total: $0</div>
+        <button id="purchaseBtn">Purchase</button>
+        <div id="purchaseHistoryDropdown">
+            <h3>Purchase History</h3>
+            <ul id="historyList"></ul>
+        </div>
+        <button id="cancelBtn">Cancel</button>
+    </div>
+
+    <div id="thankYouMessage">
+        <p>Purchase Successfully Completed</p>
+        <button id="closeThankYouBtn">Close</button>
+    </div>
+
+    <div id="purchaseDetails">
+        <button class="close-details">×</button>
+        <h3>Purchase Details</h3>
+        <ul id="purchaseDetailsList"></ul>
+        <button class="clear-history">Clear History</button>
+    </div>
+
+    <script>
+        let cart = [];
+        let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
+        let currentLanguage = 'en';
+
+        const translations = {
+            en: {
+                title: "Hel Delyfoods Restaurant Menu",
+                menu: "Our Menu",
+                entrances: "Entrances",
+                mains: "Main Foods",
+                desserts: "Desserts",
+                coldDrinks: "Cold Drinks",
+                hotDrinks: "Hot Drinks",
+                cart: "Your Cart",
+                total: "Total",
+                purchase: "Purchase",
+                cancel: "Cancel",
+                success: "Purchase Successfully Completed",
+                history: "Purchase History",
+                addToCart: "Add to Cart",
+                purchaseDetails: "Purchase Details",
+                clearHistory: "Clear History",
+                cancelOrder: "Cancel Order"
+            },
+            pt: {
+                title: "Menu do Restaurante Hel Delyfoods",
+                menu: "Nosso Menu",
+                entrances: "Entradas",
+                mains: "Pratos Principais",
+                desserts: "Sobremesas",
+                coldDrinks: "Bebidas Frias",
+                hotDrinks: "Bebidas Quentes",
+                cart: "Seu Carrinho",
+                total: "Total",
+                purchase: "Comprar",
+                cancel: "Cancelar",
+                success: "Compra Concluída com Sucesso",
+                history: "Histórico de Compras",
+                addToCart: "Adicionar ao Carrinho",
+                purchaseDetails: "Detalhes da Compra",
+                clearHistory: "Limpar Histórico",
+                cancelOrder: "Cancelar Pedido"
+            },
+            fr: {
+                title: "Menu du Restaurant Hel Delyfoods",
+                menu: "Notre Menu",
+                entrances: "Entrées",
+                mains: "Plats Principaux",
+                desserts: "Desserts",
+                coldDrinks: "Boissons Froides",
+                hotDrinks: "Boissons Chaudes",
+                cart: "Votre Panier",
+                total: "Total",
+                purchase: "Acheter",
+                cancel: "Annuler",
+                success: "Achat Réussi",
+                history: "Historique des Achats",
+                addToCart: "Ajouter au Panier",
+                purchaseDetails: "Détails de l'Achat",
+                clearHistory: "Effacer l'Historique",
+                cancelOrder: "Annuler la Commande"
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePurchaseHistory();
+
+            document.querySelectorAll('.menu-toggle button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const section = button.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+
+            document.querySelectorAll('.menu-item button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const item = button.getAttribute('data-item');
+                    const price = parseFloat(button.getAttribute('data-price'));
+                    addToCart(item, price);
+                });
+            });
+
+            const languageBtn = document.querySelector('.language-btn');
+            const dropdown = document.querySelector('.language-dropdown');
+            languageBtn.addEventListener('click', () => {
+                dropdown.classList.toggle('active');
+            });
+
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const lang = option.getAttribute('data-lang');
+                    setLanguage(lang);
+                    dropdown.classList.remove('active');
+                });
+            });
+
+            const purchaseBtn = document.getElementById('purchaseBtn');
+            const historyDropdown = document.getElementById('purchaseHistoryDropdown');
+            purchaseBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    historyDropdown.classList.toggle('active');
+                } else {
+                    confirmPurchase();
+                }
+            });
+
+            document.getElementById('cancelBtn').addEventListener('click', cancelCart);
+            document.getElementById('closeThankYouBtn').addEventListener('click', closeThankYouMessage);
+            document.querySelector('.close-details').addEventListener('click', closePurchaseDetails);
+            document.querySelector('.clear-history').addEventListener('click', clearPurchaseHistory);
+
+            showSection('entrances');
+            updateLanguage();
+        });
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+            document.querySelector('h1').textContent = t.title;
+            document.querySelector('.menu-title').textContent = t.menu;
+            document.querySelector('#entrances h2').textContent = t.entrances;
+            document.querySelector('#mains h2').textContent = t.mains;
+            document.querySelector('#desserts h2').textContent = t.desserts;
+            document.querySelector('#coldDrinks h2').textContent = t.coldDrinks;
+            document.querySelector('#hotDrinks h2').textContent = t.hotDrinks;
+            document.querySelector('#cartListBox h4').textContent = t.cart;
+            document.querySelector('#cartTotal').textContent = `${t.total}: $0`;
+            document.getElementById('purchaseBtn').textContent = t.purchase;
+            document.getElementById('cancelBtn').textContent = t.cancel;
+            document.querySelector('#thankYouMessage p').textContent = t.success;
+            document.querySelector('#purchaseHistoryDropdown h3').textContent = t.history;
+            document.querySelector('#purchaseDetails h3').textContent = t.purchaseDetails;
+            document.querySelector('.clear-history').textContent = t.clearHistory;
+            document.querySelectorAll('.menu-item button').forEach(btn => btn.textContent = t.addToCart);
+            document.querySelectorAll('.cancel-order-btn').forEach(btn => btn.textContent = t.cancelOrder);
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.menu-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function addToCart(item, price) {
+            if (price <= 0) {
+                alert('Invalid item price!');
+                return;
+            }
+            cart.push({ item, price });
+            updateCartListBox();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartListBox();
+        }
+
+        function updateCartListBox() {
+            const cartList = document.getElementById('cartList');
+            cartList.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                document.getElementById('cartListBox').classList.remove('active');
+            } else {
+                document.getElementById('cartListBox').classList.add('active');
+                cart.forEach((cartItem, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'cart-item';
+                    li.innerHTML = `
+                        <span>${cartItem.item} - $${cartItem.price}</span>
+                        <button class="remove-btn" data-index="${index}">-</button>
+                    `;
+                    cartList.appendChild(li);
+                    total += cartItem.price;
+                });
+                document.getElementById('cartTotal').textContent = `${translations[currentLanguage].total}: $${total}`;
+
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        removeFromCart(index);
+                    });
+                });
+            }
+        }
+
+        async function confirmPurchase() {
+            if (cart.length === 0) return;
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            if (total <= 0) {
+                alert('Invalid purchase total!');
+                return;
+            }
+
+            const response = await new Promise(resolve => {
+                setTimeout(() => resolve({ orderId: Math.floor(Math.random() * 1000) }), 500);
+            });
+
+            const purchase = {
+                orderId: response.orderId,
+                dateTime: new Date().toLocaleString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                }),
+                items: [...cart],
+                total: total
+            };
+            purchaseHistory.push(purchase);
+            localStorage.setItem('purchaseHistory', JSON.stringify(purchaseHistory));
+            updatePurchaseHistory();
+
+            cart = [];
+            updateCartListBox();
+            const thankYouMessage = document.getElementById('thankYouMessage');
+            thankYouMessage.classList.add('active');
+            setTimeout(() => {
+                thankYouMessage.classList.remove('active');
+                showPurchaseDetails();
+            }, 3000);
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                purchaseHistory = purchaseHistory.filter(purchase => purchase.orderId !== orderId);
+                localStorage.setItem('purchaseHistory', JSON.stringify(purchaseHistory));
+                updatePurchaseHistory();
+                showPurchaseDetails(); // Update purchase details popup if open
+            }
+        }
+
+        function showPurchaseDetails() {
+            const detailsList = document.getElementById('purchaseDetailsList');
+            detailsList.innerHTML = '';
+
+            purchaseHistory.forEach(purchase => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Order #${purchase.orderId}</strong><br>
+                    Date & Time: ${purchase.dateTime}<br>
+                    Total: $${purchase.total}<br>
+                    Items: ${purchase.items.map(item => `${item.item} ($${item.price})`).join(', ')}<br>
+                    <hr>
+                `;
+                detailsList.appendChild(li);
+            });
+
+            document.getElementById('purchaseDetails').classList.add('active');
+        }
+
+        function closePurchaseDetails() {
+            document.getElementById('purchaseDetails').classList.remove('active');
+        }
+
+        function clearPurchaseHistory() {
+            if (confirm('Are you sure you want to clear your purchase history?')) {
+                purchaseHistory = [];
+                localStorage.setItem('purchaseHistory', JSON.stringify(purchaseHistory));
+                updatePurchaseHistory();
+                document.getElementById('purchaseDetailsList').innerHTML = '';
+                document.getElementById('purchaseDetails').classList.remove('active');
+            }
+        }
+
+        function cancelCart() {
+            if (cart.length > 0) {
+                if (confirm('Are you sure you want to cancel your order?')) {
+                    cart = [];
+                    updateCartListBox();
+                }
+            }
+        }
+
+        function closeThankYouMessage() {
+            document.getElementById('thankYouMessage').classList.remove('active');
+            showPurchaseDetails();
+        }
+
+        function updatePurchaseHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            purchaseHistory.forEach(purchase => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.innerHTML = `
+                    <strong>Order #${purchase.orderId}</strong><br>
+                    Date & Time: ${purchase.dateTime}<br>
+                    Total: $${purchase.total}<br>
+                    Items: ${purchase.items.map(item => item.item).join(', ')}<br>
+                    <button class="cancel-order-btn" data-order-id="${purchase.orderId}">${translations[currentLanguage].cancelOrder}</button>
+                    <hr>
+                `;
+                historyList.appendChild(li);
+            });
+
+            document.querySelectorAll('.cancel-order-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const orderId = parseInt(btn.getAttribute('data-order-id'));
+                    cancelOrder(orderId);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
